@@ -1,0 +1,48 @@
+name: Docker Image CI
+
+inputs:
+  repository:
+    description: "Name of ECR Repository"
+    required: true
+  docker-context:
+    description: "Docker context"
+    required: false
+    default: "."
+  docker-file:
+    description: "Docker file"
+    required: false
+    default: "Dockerfile"
+  access-key-id:
+    description: "Access Key Id of AWS"
+    required: true
+  secret-access-key:
+    description: "Secret Access Key of AWS"
+    required: true
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: self-hosted
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.SWITCH_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SWITCH_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push (with target)
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.docker-context }}
+          file: ${{ inputs.docker-file }}
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ github.ref_name }}
