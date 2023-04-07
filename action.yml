@@ -19,30 +19,28 @@ inputs:
     description: "Secret Access Key of AWS"
     required: true
 
-jobs:
-  build:
-    name: Build Image
-    runs-on: self-hosted
+runs:
+  using: "composite"
 
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ inputs.access-key-id }}
-          aws-secret-access-key: ${{ inputs.secret-access-key }}
-          aws-region: ap-northeast-2
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ inputs.access-key-id }}
+        aws-secret-access-key: ${{ inputs.secret-access-key }}
+        aws-region: ap-northeast-2
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push (with target)
-        uses: docker/build-push-action@v3
-        with:
-          context: ${{ inputs.docker-context }}
-          file: ${{ inputs.docker-file }}
-          push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ github.ref_name }}
+    - name: Build and push (with target)
+      uses: docker/build-push-action@v3
+      with:
+        context: ${{ inputs.docker-context }}
+        file: ${{ inputs.docker-file }}
+        push: true
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ github.ref_name }}
