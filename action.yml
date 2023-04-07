@@ -55,3 +55,4 @@ runs:
         push: true
         tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ steps.split.outputs.fragment }}
         build-args: ${{ inputs.docker-build-args }}
+        plaforms: linux/amd64
