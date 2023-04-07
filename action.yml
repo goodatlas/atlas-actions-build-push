@@ -12,6 +12,9 @@ inputs:
     description: "Docker file"
     required: false
     default: "Dockerfile"
+  docker-build-args:
+    required: false
+    default: ""
   access-key-id:
     description: "Access Key Id of AWS"
     required: true
@@ -51,3 +54,4 @@ runs:
         file: ${{ inputs.docker-file }}
         push: true
         tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ steps.split.outputs.fragment }}
+        build-args: ${{ inputs.docker-build-args }}
