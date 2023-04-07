@@ -41,6 +41,7 @@ runs:
       env:
         BRANCH: ${{ github.ref_name }}
       id: split
+      shell: bash
       run: echo "::set-output name=fragment::${BRANCH##*/}"
 
     - name: Build and push (with target)
