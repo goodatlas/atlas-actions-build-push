@@ -42,7 +42,7 @@ runs:
       with:
         msg: ${{ github.ref_name }}
         separator: "/"
-        maxsplit: -1
+        maxsplit: 1
 
     - name: Build and push (with target)
       uses: docker/build-push-action@v3
@@ -50,4 +50,4 @@ runs:
         context: ${{ inputs.docker-context }}
         file: ${{ inputs.docker-file }}
         push: true
-        tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ steps.branch.outputs._1 }}
+        tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.repository }}:${{ steps.branch.outputs._0 }}
